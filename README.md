@@ -4,11 +4,11 @@
 
 Dette prosjektet analyserer boligmarkedet i Stavanger basert på to datasett:
 
-Apartments dataset: informasjon om boliger (areal, antall rom, bygningstype, adresse, etc.)
+- **Apartments dataset:** informasjon om boliger (areal, antall rom, bygningstype, adresse, etc.)
 
-Sales dataset: informasjon om salgstransaksjoner (dato, pris, gjeld, prisantydning, etc.)
+- **Sales dataset:** informasjon om salgstransaksjoner (dato, pris, gjeld, prisantydning, etc.)
 
-Mål: Å utforske hvordan faktorer som beliggenhet, boligtype, bygningsår påvirker prisene.
+**Mål**: Å utforske hvordan faktorer som beliggenhet, boligtype, bygningsår påvirker prisene.
 Prosjektet demonstrerer ferdigheter innen SQL Server (T-SQL), dataklargjøring og dataanalyse.
 
 ## Datasett
@@ -39,4 +39,11 @@ Ifølge avtalen kan data kun brukes til skoleoppgave og kan ikke deles offentlig
 Derfor er ikke de originale datafilene inkludert i dette repoet.  
 All kode og spørringer er tilgjengelig her, men analysene kan kun kjøres med de originale filene jeg fikk.
 
+## SQL Queries & Analysis
+
+### 1. Hvor mange leiligheter er registrert totalt
+
+SELECT COUNT(*) AS total_apartments
+FROM apartments_clean
+<img width="141" height="44" alt="query1" src="https://github.com/user-attachments/assets/8469d87d-5bbe-4d80-8cc0-951bd9e80a5b" />
 
