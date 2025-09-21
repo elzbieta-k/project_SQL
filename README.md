@@ -126,3 +126,114 @@ GROUP BY bygningstype
 
 <img width="361" height="345" alt="query6" src="https://github.com/user-attachments/assets/c43fb03a-2120-4646-a403-903000a63090" />
 
+### 7. Boliger solgte flere ganger
+
+```sql
+SELECT
+	s.address_id,
+	COUNT(*) AS antall_salg
+FROM sales_clean s
+WHERE s.official_date IS NOT NULL
+GROUP BY s.address_id
+HAVING COUNT(*) > 1
+ORDER BY antall_salg DESC
+```
+<img width="171" height="381" alt="query7" src="https://github.com/user-attachments/assets/32503449-c235-4ba3-a481-06e69cfbda66" />
+
+### 8. Utvikling av pris for hver bolig over tid
+
+```sql
+SELECT 
+	address_id,
+	street_address,
+	official_date,
+	official_price
+FROM sales_with_apartments
+WHERE official_price IS NOT NULL
+ORDER BY address_id, official_date
+```
+<img width="357" height="346" alt="query8" src="https://github.com/user-attachments/assets/738d6b20-2feb-4824-b82f-95f9a35e0820" />
+
+### 9. Beregne prisendring mellom første og siste salg
+```sql
+WITH ranked_sales AS (
+SELECT
+	address_id,
+	street_address,
+	official_date,
+	official_price,
+	ROW_NUMBER () OVER (PARTITION BY address_id ORDER BY official_date ASC) AS ranked_sales_asc,
+	ROW_NUMBER () OVER (PARTITION BY address_id ORDER BY official_date DESC) AS ranked_sales_desc
+FROM sales_with_apartments
+WHERE official_price IS NOT NULL AND official_price <> '0'
+)
+SELECT 
+	first_sale.address_id,
+	first_sale.street_address,
+	first_sale.official_date AS first_date,
+	first_sale.official_price AS first_price,
+	last_sale.official_date AS last_date,
+	last_sale.official_price AS last_price,
+	(last_sale.official_price - first_sale.official_price) AS pris_endring,
+	ROUND((last_sale.official_price - first_sale.official_price) * 100.0 / first_sale.official_price,2) as prosent_endring,
+	DATEDIFF(year, first_sale.official_date, last_sale.official_date) as tid_år
+FROM ranked_sales first_sale
+JOIN ranked_sales last_sale
+ON first_sale.address_id = last_sale.address_id
+WHERE first_sale.ranked_sales_asc = 1 AND last_sale.ranked_sales_desc = 1
+ORDER BY prosent_endring DESC
+```
+
+<img width="690" height="389" alt="query9" src="https://github.com/user-attachments/assets/b86fcfc3-1383-49ca-975f-547e4e6615be" />
+
+### 10. Gjennomsnitt pris per postnummer (med navnet på bydel)
+
+```sql
+SELECT 
+	postnr,
+	CASE
+		WHEN postnr IN (4005, 4008, 4009, 4010, 4022, 4023, 4024) THEN 'Eiganes og Våland'
+		WHEN postnr IN (4006, 4012, 4013, 4014, 4015, 4076) THEN 'Storhaug'
+		WHEN postnr IN (4016, 4017, 4019, 4021) THEN 'Hillevåg'
+		WHEN postnr IN (4018, 4020, 4031, 4032, 4033, 4034) THEN 'Hinna'
+		WHEN postnr IN (4025, 4026, 4027, 4028, 4029, 4154) THEN 'Tasta'
+		WHEN postnr IN (4041, 4042, 4043, 4044, 4045, 4046, 4047, 4048, 4049) THEN 'Madla'
+		WHEN postnr IN (4077, 4083, 4085) THEN 'Hundvåg'
+		ELSE 'Ukjent'
+	END as bydel,
+	COUNT(sale_id) as antall_salg,
+	ROUND(AVG(official_price), 0) AS gjennomsnitt_pris
+FROM sales_with_apartments
+WHERE postnr IS NOT NULL
+GROUP BY postnr
+ORDER BY gjennomsnitt_pris DESC
+```
+<img width="347" height="800" alt="query10" src="https://github.com/user-attachments/assets/b70cf42e-9392-4649-b5b2-2cacb05d0a1e" />
+
+### 11. Sammenheng mellom byggeår og boligpris
+
+```sql
+SELECT 
+    CASE 
+        WHEN YEAR(tattibrukdato) < 1950 THEN 'Før 1950'
+        WHEN YEAR(tattibrukdato) BETWEEN 1950 AND 1980 THEN '1950–1980'
+        WHEN YEAR(tattibrukdato) BETWEEN 1981 AND 2000 THEN '1981–2000'
+        WHEN YEAR(tattibrukdato) BETWEEN 2001 AND 2015 THEN '2001–2015'
+        ELSE '2016+'
+    END AS byggeperiode,
+    COUNT(sale_id) AS antall_salg,
+    ROUND(AVG(official_price),0) AS gjennomsnitt_pris
+FROM sales_with_apartments
+WHERE tattibrukdato IS NOT NULL
+GROUP BY 
+    CASE 
+        WHEN YEAR(tattibrukdato) < 1950 THEN 'Før 1950'
+        WHEN YEAR(tattibrukdato) BETWEEN 1950 AND 1980 THEN '1950–1980'
+        WHEN YEAR(tattibrukdato) BETWEEN 1981 AND 2000 THEN '1981–2000'
+        WHEN YEAR(tattibrukdato) BETWEEN 2001 AND 2015 THEN '2001–2015'
+        ELSE '2016+'
+    END
+ORDER BY gjennomsnitt_pris DESC;
+```
+
+<img width="269" height="104" alt="query11" src="https://github.com/user-attachments/assets/4a790b81-8c98-4ba5-b4ee-66275f01d6d3" />
