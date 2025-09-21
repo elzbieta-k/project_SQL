@@ -43,7 +43,22 @@ All kode og spørringer er tilgjengelig her, men analysene kan kun kjøres med d
 
 ### 1. Hvor mange leiligheter er registrert totalt
 
-SELECT COUNT(*) AS total_apartments
+```sql
+SELECT 
+  COUNT(*) AS total_apartments
 FROM apartments_clean
+```
 <img width="141" height="44" alt="query1" src="https://github.com/user-attachments/assets/8469d87d-5bbe-4d80-8cc0-951bd9e80a5b" />
+
+### 2. Antall boliger per bygninstype
+```sql
+SELECT
+  bygningstype,
+  COUNT(id) as antall_boliger
+FROM apartments_clean
+GROUP BY bygningstype
+ORDER BY antall_boliger DESC
+```
+<img width="338" height="419" alt="query2" src="https://github.com/user-attachments/assets/c288303e-2a7c-4cff-8196-5d4142879d6b" />
+
 
