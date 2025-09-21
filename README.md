@@ -1,5 +1,6 @@
-Stavanger Housing Market Analysis
-📌 Introduksjon
+# Stavanger Housing Market Analysis
+
+## Introduksjon
 
 Dette prosjektet analyserer boligmarkedet i Stavanger basert på to datasett:
 
@@ -7,10 +8,10 @@ Apartments dataset: informasjon om boliger (areal, antall rom, bygningstype, adr
 
 Sales dataset: informasjon om salgstransaksjoner (dato, pris, gjeld, prisantydning, etc.)
 
-Mål: Å utforske hvordan faktorer som beliggenhet, boligtype, størrelse og utstyr påvirker prisene.
+Mål: Å utforske hvordan faktorer som beliggenhet, boligtype, bygningsår påvirker prisene.
 Prosjektet demonstrerer ferdigheter innen SQL Server (T-SQL), dataklargjøring og dataanalyse.
 
-🗂 Datasett
+## Datasett
 
 apartments (65,830 rader, 25 kolonner)
 
@@ -22,10 +23,20 @@ apartments_clean
 
 sales_clean
 
-🔧 Dataklargjøring
+## Dataklargjøring
 
 Import av CSV med SQL Server Import Wizard
 
 Opprettet raw tables (NVARCHAR for alle kolonner) for å unngå importfeil
 
 Renset data ved å bruke TRY_CAST til riktige datatyper (DATE, INT, FLOAT)
+
+## Datadisklaimer
+
+Datasettet som er brukt i dette prosjektet er levert av "virdi.no" under en avtale.  
+Ifølge avtalen kan data kun brukes til skoleoppgave og kan ikke deles offentlig.  
+
+Derfor er ikke de originale datafilene inkludert i dette repoet.  
+All kode og spørringer er tilgjengelig her, men analysene kan kun kjøres med de originale filene jeg fikk.
+
+
