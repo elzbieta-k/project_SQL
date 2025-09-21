@@ -5,10 +5,9 @@
 
 
 --Sjekke data
-SELECT TOP 100 * FROM apartments
-SELECT TOP 100 * FROM market_transactions
-SELECT * FROM sales_clean
-WHERE register_date <> '1900-01-01'
+SELECT TOP 10 * FROM apartments_clean
+SELECT TOP 10 * FROM sales_clean
+
 
 CREATE TABLE apartments_clean (
     id INT PRIMARY KEY,
@@ -95,17 +94,19 @@ FROM market_transactions;
 -----------ANALYSE--------------
 
 --Hvor mange leiligheter er registrert totalt
-SELECT COUNT(*) AS total_apartments
+SELECT 
+	COUNT(*) AS total_apartments
 FROM apartments_clean
 
 
 --Antall boliger per bygninstype
 SELECT
-bygningstype,
+	bygningstype,
 COUNT(id) as antall_boliger
 FROM apartments_clean
 GROUP BY bygningstype
 ORDER BY antall_boliger DESC
+
 
 --Lage view med join tabeller (siden det er brukt flere ganger - slipper å skrive samme JOIN flere ganger)
 
@@ -129,6 +130,8 @@ SELECT
 FROM sales_clean s
 JOIN apartments_clean a ON s.address_id = a.id
 
+SELECT TOP 10 * FROM sales_with_apartments
+WHERE postnr IS NOT NULL AND antallrom IS NOT NULL AND antallrom <> '0' AND prom IS NOT NULL AND prom <> '0'
 
 --Gjennomsnitt pris for bygningstype
 SELECT 
@@ -185,9 +188,10 @@ JOIN apartments_clean a ON s.address_id = a.id
 WHERE register_date <> '1900-01-01' AND sold_date <> '1900-01-01'
 GROUP BY bygningstype
 
---Boliger solgte flere ganger - 
-SELECT s.address_id,
-COUNT(*) AS antall_salg
+--Boliger solgte flere ganger
+SELECT 
+	s.address_id,
+	COUNT(*) AS antall_salg
 FROM sales_clean s
 WHERE s.official_date IS NOT NULL
 GROUP BY s.address_id
@@ -209,12 +213,12 @@ ORDER BY address_id, official_date
 --Beregne prisendring mellom første og siste salg
 WITH ranked_sales AS (
 SELECT
-address_id,
-street_address,
-official_date,
-official_price,
-ROW_NUMBER () OVER (PARTITION BY address_id ORDER BY official_date ASC) AS ranked_sales_asc,
-ROW_NUMBER () OVER (PARTITION BY address_id ORDER BY official_date DESC) AS ranked_sales_desc
+	address_id,
+	street_address,
+	official_date,
+	official_price,
+	ROW_NUMBER () OVER (PARTITION BY address_id ORDER BY official_date ASC) AS ranked_sales_asc,
+	ROW_NUMBER () OVER (PARTITION BY address_id ORDER BY official_date DESC) AS ranked_sales_desc
 FROM sales_with_apartments
 WHERE official_price IS NOT NULL AND official_price <> '0'
 )
@@ -227,7 +231,7 @@ SELECT
 	last_sale.official_price AS last_price,
 	(last_sale.official_price - first_sale.official_price) AS pris_endring,
 	ROUND((last_sale.official_price - first_sale.official_price) * 100.0 / first_sale.official_price,2) as prosent_endring,
-	DATEDIFF(year, first_sale.official_date, last_sale.official_date) as tid_year
+	DATEDIFF(year, first_sale.official_date, last_sale.official_date) as tid_år
 FROM ranked_sales first_sale
 JOIN ranked_sales last_sale
 ON first_sale.address_id = last_sale.address_id
