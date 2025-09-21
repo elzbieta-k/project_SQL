@@ -13,23 +13,23 @@ Prosjektet demonstrerer ferdigheter innen SQL Server (T-SQL), dataklargjøring o
 
 ## Datasett
 
-apartments (65,830 rader, 25 kolonner)
+- apartments (65,830 rader, 25 kolonner)
 
-market_transactions (88,993 rader, 8 kolonner)
+- market_transactions (88,993 rader, 8 kolonner)
 
 Etter import ble dataene renset og transformert til:
 
-apartments_clean
+- apartments_clean
 
-sales_clean
+- sales_clean
 
 ## Dataklargjøring
 
-Import av CSV med SQL Server Import Wizard
+- Import av CSV med SQL Server Import Wizard
 
-Opprettet raw tables (NVARCHAR for alle kolonner) for å unngå importfeil
+- Opprettet raw tables (NVARCHAR for alle kolonner) for å unngå importfeil
 
-Renset data ved å bruke TRY_CAST til riktige datatyper (DATE, INT, FLOAT)
+- Renset data ved å bruke TRY_CAST til riktige datatyper (DATE, INT, FLOAT)
 
 ## Datadisklaimer
 
@@ -40,6 +40,14 @@ Derfor er ikke de originale datafilene inkludert i dette repoet.
 All kode og spørringer er tilgjengelig her, men analysene kan kun kjøres med de originale filene jeg fikk.
 
 ## SQL Queries & Analysis
+
+### Bli kjent med data
+```sql
+SELECT TOP 10 * FROM apartments_clean
+SELECT TOP 10 * FROM sales_clean
+```
+<img width="1883" height="369" alt="query00" src="https://github.com/user-attachments/assets/5720f228-e634-4594-a15d-128a6fa1a56e" />
+
 
 ### 1. Hvor mange leiligheter er registrert totalt
 
